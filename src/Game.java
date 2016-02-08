@@ -1,5 +1,5 @@
 import java.util.Scanner;
-import java.util.Arrays;
+//import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -12,15 +12,21 @@ public class Game {
 	
 	// The game board and the game status
 	public static String[] board = {"0", "1", "2", "3", "4", "5", "6", "7", "8"};
-	public static int[][] winConditions = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
 	public static int currentState;  // the current state of the game
 	public static String currentPlayer; // the current player
+	
+	//String values containing the chosen value for each player
 	public static String playerSymbol;
 	public static String opponentSymbol;
 	
+	//potential win conditions, used for checking if the game is over
+	public static int[][] winConditions = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
+	
 	public static Scanner input = new Scanner(System.in); // the input Scanner
 	
-	/** The entry main method (the program starts here) */
+	/** 
+	 * The entry main method (the program starts here) 
+	 */
 	public static void main(String[] args) {
 		// Initialize the game-board and current status
 		pickSymbols();
@@ -37,6 +43,10 @@ public class Game {
 		System.out.print("Game over\n");
 	}
 	
+	/** 
+	 * pickSymbols() - allows user to select a symbol for the 
+	 * 				player and for the opponent.
+	 */
 	public static void pickSymbols() {
 		boolean validInput = false;
 		System.out.print("Enter a symbol for the player: ");
@@ -60,12 +70,19 @@ public class Game {
 		} while (!validInput);  // repeat until input is valid
 	}
 
-	/** Initializes the game */
+	/** 
+	 * Initializes the game
+	 */
 	public static void initGame() {
 		currentState = 0; // "playing" or ready to play
 		currentPlayer = playerSymbol;  // cross plays first
 	}
 
+	/**
+	 * Returns the next player
+	 * 
+	 * @return String
+	 */
 	public static String nextPlayer() {
 		if (currentPlayer == playerSymbol) {
 			return opponentSymbol;
@@ -74,17 +91,33 @@ public class Game {
 		}
 	}
 
-	/** Update global variables "board" and "currentPlayer". */
+	/** 
+	 * Update global variables "board" and "currentPlayer". 
+	 */
 	public static void getHumanSpot() {
+		int spot;
 		boolean validInput = false;  // for input validation
-		System.out.print("Enter [0-8]:\n");
 		do {
-			int spot = input.nextInt();
+			System.out.print("Enter [0-8]:\n");
+			String scanIn = input.next();
+			
+			/* Resolves issue:
+			 * "The game skips turn on bad input."
+			 */
+			try {
+				spot = Integer.parseInt(scanIn);
+			}
+			catch (NumberFormatException e) {
+				System.out.println("Error: Please input 0-8.");
+				continue;
+			}
+
 			if (board[spot] != playerSymbol && board[spot] != opponentSymbol) {
 				board[spot] = playerSymbol;  // update game-board content
 				printBoard();
 				validInput = true;  // input okay, exit loop
 			}
+
 			currentPlayer = nextPlayer();  // cross plays first
 		} while (!validInput);  // repeat until input is valid
 	}
@@ -160,8 +193,16 @@ public class Game {
 		}
 	}
 
-	/** Return true if it is a draw (no more empty cell) */
+	/** 
+	 * Return true if it is a draw (no more empty cells) 
+	 */
 	public static boolean tie() {
+		/*
+		 * "Easier" than the previous tie-checking method.
+		 * For each loop runs through the board checking for spaces not containing 
+		 * either the player's symbol or the opponent's symbol.
+		 * (Previously returned whether any of the board positions were empty)
+		 */
 		for(String b : board)
 		{
 			if(!b.equals(playerSymbol) && !b.equals(opponentSymbol))
@@ -170,7 +211,9 @@ public class Game {
 		return true;
 	}
 
-	/** Print the game board */
+	/** 
+	 * Print the game board 
+	 */
 	public static void printBoard() {
 		System.out.println(" " + board[0] + " | " + board[1] + " | " + board[2] + "\n===+===+===\n" + " " + board[3] + " | " + board[4] + " | " + board[5] + "\n===+===+===\n" + " " + board[6] + " | " + board[7] + " | " + board[8] + "\n"); // print all the board cells
 	}
