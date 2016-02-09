@@ -27,20 +27,70 @@ public class Game {
 	/** 
 	 * The entry main method (the program starts here) 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		// Initialize the game-board and current status
+		System.out.println("Welcome! Let's play a game of Tic-Tac-Toe.");
 		pickSymbols();
 		initGame();
 		printBoard();
+		playGame();
+		replay();
+	}
+	
+	/**
+	 * freshBoard() - clears the board for a replay
+	 */
+	public static void freshBoard()
+	{
+		board[0] = "0";
+		board[1] = "1"; 
+		board[2] = "2"; 
+		board[3] = "3"; 
+		board[4] = "4"; 
+		board[5] = "5"; 
+		board[6] = "6"; 
+		board[7] = "7"; 
+		board[8] = "8";
+	}
+	
+	/**
+	 * replay() - prompts the player to replay the game
+	 */
+	public static void replay()
+	{
+		boolean validInput = false;
+		
+		do	{
+			System.out.print("Play again? (y/n)\n");	//prints this twice, have yet to figure out why
+			String replay = input.nextLine();
+			if(replay.equals("y") || replay.equals("Y"))	{
+				freshBoard();
+				pickSymbols();
+				initGame();
+				printBoard();
+				playGame();
+				validInput = true;
+			}
+			else if(replay.equals("n") || replay.equals("N"))	{
+				System.out.println("Have a nice day!");
+				validInput = true;
+			}
+		} while (!validInput);
+	}
+	
+	public static void playGame()
+	{
 		do {
 			getHumanSpot();
-			System.out.println("gameIsOver: " + gameIsOver());
-			System.out.println("tie: " + tie());
 			if (!gameIsOver() && !tie()) {
 				evalBoard();
 			}
 		} while (!gameIsOver() && !tie()); // repeat if not game-over
-		System.out.print("Game over\n");
+		
+		if(tie())
+			System.out.println("It's a tie!");
+		
+		System.out.println("Game over.\n");
 	}
 	
 	/** 
@@ -49,24 +99,27 @@ public class Game {
 	 */
 	public static void pickSymbols() {
 		boolean validInput = false;
-		System.out.print("Enter a symbol for the player: ");
+		
 		do {
+			System.out.print("Enter a symbol for the player: ");
 			String symbol = input.next();
 			if (symbol.length() == 1) {
 				playerSymbol = symbol;
-				validInput = true;  // input okay, exit loop
+				validInput = true;  // input okay, exit loop	
 			}
 		} while (!validInput);  // repeat until input is valid
 		
 		validInput = false;
 		
-		System.out.print("Enter a symbol for the opponent: ");
 		do {
+			System.out.print("Enter a symbol for the opponent: ");
 			String symbol = input.next();
 			if (symbol.length() == 1 && !symbol.equals(playerSymbol)) {
 				opponentSymbol = symbol;
 				validInput = true;  // input okay, exit loop
 			}
+			else
+				continue;
 		} while (!validInput);  // repeat until input is valid
 	}
 
@@ -107,15 +160,22 @@ public class Game {
 			try {
 				spot = Integer.parseInt(scanIn);
 			}
-			catch (NumberFormatException e) {
+			catch (NumberFormatException e) {	//catches if input cannot be an int
 				System.out.println("Error: Please input 0-8.");
 				continue;
 			}
 
-			if (board[spot] != playerSymbol && board[spot] != opponentSymbol) {
-				board[spot] = playerSymbol;  // update game-board content
-				printBoard();
-				validInput = true;  // input okay, exit loop
+			
+			try {
+				if (board[spot] != playerSymbol && board[spot] != opponentSymbol) {
+					board[spot] = playerSymbol;  // update game-board content
+					printBoard();
+					validInput = true;  // input okay, exit loop
+				}
+			}
+			catch (ArrayIndexOutOfBoundsException e) {	//catches if input < 0 or input > 8
+				System.out.println("Error: Please input 0-8.");
+				continue;
 			}
 
 			currentPlayer = nextPlayer();  // cross plays first
@@ -147,12 +207,14 @@ public class Game {
         {
             if (board[w[0]] == playerSymbol
                 && board[w[1]] == playerSymbol
-                && board[w[2]] == playerSymbol)
+                && board[w[2]] == playerSymbol)	{
                 return true;
+            }
             else if(board[w[0]] == opponentSymbol
                     && board[w[1]] == opponentSymbol
-                    && board[w[2]] == opponentSymbol)
+                    && board[w[2]] == opponentSymbol)	{
             	return true;
+            }
         }
 		return false;
 	}
