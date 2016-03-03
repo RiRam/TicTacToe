@@ -1,7 +1,3 @@
-import java.util.Scanner;
-//import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Tic-Tac-Toe: Two-player console version.
@@ -23,7 +19,7 @@ public abstract class Game {
 	/**
 	 * replay() - prompts the player to replay the game
 	 */
-	public abstract void replay();
+	public abstract boolean replay();
 	
 	/**
 	 * playGame() - play the game

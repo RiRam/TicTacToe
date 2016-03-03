@@ -11,6 +11,5 @@ public class Driver {
 		System.out.println(game.rules());
 		game.printBoard();
 		game.playGame();
-		game.replay();
 	}
 }

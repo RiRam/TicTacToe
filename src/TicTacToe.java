@@ -15,6 +15,11 @@ public class TicTacToe extends Game {
 	//potential win conditions, used for checking if the game is over
 	public static int[][] winConditions = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
 	
+	//used for checking for a win or a block
+	public static int[][] twoInARow = {{0, 1}, {1, 2}, {3, 4}, {4, 5}, {6, 7}, {7, 8},	//horizontal two in a row
+										{0, 3}, {3, 6}, {1, 4}, {4, 7}, {2, 5}, {5, 8},	//vertical two in a row 
+										{0, 4}, {4, 8}, {2, 4}, {4, 6}};	//diagonal two in a row
+	
 	public static Scanner input = new Scanner(System.in); // the input Scanner
 	
 	/** 
@@ -113,7 +118,7 @@ public class TicTacToe extends Game {
 				continue;
 			}
 
-			currentPlayer = nextPlayer();  // cross plays first
+			currentPlayer = nextPlayer(); 
 		} while (!validInput);  // repeat until input is valid
 	}
 	
@@ -123,23 +128,24 @@ public class TicTacToe extends Game {
 	public void evalBoard() {
 		boolean foundSpot = false;
 		do {
-			if (board[4] == "4") {
-				board[4] = opponentSymbol;
+			int spot = getBestMove();
+			if (board[spot] != playerSymbol && board[spot] != opponentSymbol) {
 				foundSpot = true;
+				board[spot] = opponentSymbol;
 			} else {
-				int spot = getBestMove();
-				if (board[spot] != playerSymbol && board[spot] != opponentSymbol) {
-					foundSpot = true;
-					board[spot] = opponentSymbol;
-				} else {
-					foundSpot = false;
-				}
+				foundSpot = false;
 			}
 		} while (!foundSpot);
+		currentPlayer = nextPlayer();
 		printBoard();
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getBestMove() {
+		/*
 		ArrayList<String> availableSpaces = new ArrayList<String>();
 		boolean foundBestMove = false;
 		int spot = 100;
@@ -166,12 +172,163 @@ public class TicTacToe extends Game {
 				}
 			}
 		}
-		if (foundBestMove) {
+		*/
+		int spot = -1;
+		
+		if(checkWin() != -1)
+		{
+			spot = checkWin();
+			System.out.println("checkWin() at " + spot);
+		}
+		else if(checkBlock() != -1)
+		{
+			spot = checkBlock();
+			System.out.println("checkBlock() at " + spot);
+		}
+		else if(checkCenter())
+		{
+			spot = 4;
+			System.out.println("checkCenter() at " + spot);
+		}
+		else if(checkOppositeCorner() != -1)
+		{
+			spot = checkOppositeCorner();
+			System.out.println("checkOppositeCorner() at " + spot);
+		}
+		else if(checkEmptyCorner() != -1)
+		{
+			spot = checkEmptyCorner();
+			System.out.println("checkEmptyCorner() at " + spot);
+		}
+		else if(checkEmptySide() != -1)	
+		{
+			spot = checkEmptySide();
+			System.out.println("checkEmptySide() at " + spot);
+		}
+			
+		if (spot != -1) {
 			return spot;
 		} else {
+			/*
 			int n = ThreadLocalRandom.current().nextInt(0, availableSpaces.size());
 			return Integer.parseInt(availableSpaces.get(n));
+			*/
+			System.out.println("No more moves!");
+			return -1;
 		}
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static int checkWin()
+	{
+		for ( int[] t : winConditions )           
+        {
+            if (board[t[0]] == opponentSymbol
+                && board[t[1]] == opponentSymbol
+                && isEmptySpace(t[2]))	{
+                return t[2];
+            }
+            else if(isEmptySpace(t[0])
+                    && board[t[1]] == opponentSymbol
+                    && board[t[2]] == opponentSymbol)	{
+            	return t[0];
+            }
+            else if(board[t[0]] == opponentSymbol
+                    && isEmptySpace(t[1])
+                    && board[t[2]] == opponentSymbol)	{
+            	return t[1];
+            }
+        }
+		return -1;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static int checkBlock()
+	{
+		for ( int[] t : winConditions )           
+        {
+            if (board[t[0]] == playerSymbol
+                && board[t[1]] == playerSymbol
+                && isEmptySpace(t[2]))	{
+                return t[2];
+            }
+            else if(isEmptySpace(t[0])
+                    && board[t[1]] == playerSymbol
+                    && board[t[2]] == playerSymbol)	{
+            	return t[0];
+            }
+            else if(board[t[0]] == playerSymbol
+                    && isEmptySpace(t[1])
+                    && board[t[2]] == playerSymbol)	{
+            	return t[1];
+            }
+        }
+		return -1;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static boolean checkCenter()
+	{
+		return isEmptySpace(4);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static int checkOppositeCorner()
+	{
+		if(board[0].equals(playerSymbol) && isEmptySpace(8))
+			return 8;
+		else if(board[2].equals(playerSymbol) && isEmptySpace(6))
+			return 6;
+		else if(board[8].equals(playerSymbol) && isEmptySpace(0))
+			return 0;
+		else if(board[6].equals(playerSymbol) && isEmptySpace(2))
+			return 2;
+		else
+			return -1;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static int checkEmptyCorner()
+	{
+		if(isEmptySpace(0))
+			return 0;
+		else if(isEmptySpace(2))
+			return 2;
+		else if(isEmptySpace(6))
+			return 6;
+		else if(isEmptySpace(8))
+			return 8;
+		else
+			return -1;
+	}
+	
+	public static int checkEmptySide()
+	{
+		if(isEmptySpace(1))
+			return 1;
+		else if(isEmptySpace(3))
+			return 3;
+		else if(isEmptySpace(5))
+			return 5;
+		else if(isEmptySpace(7))
+			return 7;
+		else
+			return -1;
 	}
 	
 	/**
@@ -217,9 +374,9 @@ public class TicTacToe extends Game {
 
 	@Override
 	public String rules() {
-		return "Rules:\nTic-tac-toe is a paper-and-pencil game for two players, X and O, "
-				+ "who take turns marking the spaces in a 3×3 grid. The player who succeeds"
-				+ " in placing three of their marks in a horizontal, vertical, or diagonal row wins the game.\n";
+		return "Rules:\nTic-tac-toe is a paper-and-pencil game for two players, who take\n"
+				+ "turns marking the spaces in a 3×3 grid. The player who succeeds in placing\n"
+				+ "three of their marks in a horizontal, vertical, or diagonal row wins the game.\n";
 		
 	}
 
@@ -235,9 +392,17 @@ public class TicTacToe extends Game {
 		board[7] = "7"; 
 		board[8] = "8";
 	}
+	
+	public static boolean isEmptySpace(int spot)
+	{
+		if(board[spot].equals(playerSymbol) || board[spot].equals(opponentSymbol))
+			return false;
+		else
+			return true;
+	}
 
 	@Override
-	public void replay() {
+	public boolean replay() {
 		boolean validInput = false;
 		
 		do	{
@@ -246,30 +411,33 @@ public class TicTacToe extends Game {
 			if(replay.equals("y") || replay.equals("Y"))	{
 				setup();
 				pickSymbols();
-				printBoard();
-				playGame();
 				validInput = true;
+				return true;
 			}
 			else if(replay.equals("n") || replay.equals("N"))	{
 				System.out.println("Have a nice day!");
 				validInput = true;
+				return false;
 			}
 		} while (!validInput);
+		return false;
 	}
 
 	@Override
 	public void playGame() {
 		do {
-			getPlayerSpot();
-			if (!gameIsOver() && !tie()) {
-				evalBoard();
-			}
-		} while (!gameIsOver() && !tie()); // repeat if not game-over
-		
-		if(tie())
-			System.out.println("It's a tie!");
-		
-		System.out.println("Game over.\n");
+			do {
+				if(currentPlayer.equals(playerSymbol))
+					getPlayerSpot();
+				else if(currentPlayer.equals(opponentSymbol))
+					evalBoard();
+			} while (!gameIsOver() && !tie()); // repeat if not game-over
+			
+			if(tie())
+				System.out.println("It's a tie!");
+			
+			System.out.println("Game over.\n");
+		} while(replay());
 	}
 
 	@Override
