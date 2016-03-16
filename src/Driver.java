@@ -6,8 +6,7 @@ public class Driver {
 	public static void main(String[] args) {		
 		// Initialize the game-board and current status
 		System.out.println("Welcome! Let's play a game of Tic-Tac-Toe.");
-		TicTacToe.pickSymbols();
-		TicTacToe game = new TicTacToe(TicTacToe.pickFirstPlayer());
+		TicTacToe game = new TicTacToe();
 		System.out.println(game.rules());
 		game.printBoard();
 		game.playGame();

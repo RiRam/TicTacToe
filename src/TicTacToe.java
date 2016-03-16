@@ -26,9 +26,9 @@ public class TicTacToe extends Game {
 	 * TicTacToe - Constructor
 	 * Initializes the game (replacing initGame())
 	 */
-	public TicTacToe(String playerOne)
+	public TicTacToe()
 	{
-		currentPlayer = playerOne;
+		this.setup();
 	}
 	
 	/**
@@ -363,7 +363,7 @@ public class TicTacToe extends Game {
 	}
 
 	/** 
-	 * Print the game board 
+	 * printBoard() - Print the game board 
 	 */
 	public void printBoard() {
 		System.out.println(" " + board[0] + " | " + board[1] + " | " + board[2] 
@@ -404,13 +404,13 @@ public class TicTacToe extends Game {
 	@Override
 	public boolean replay() {
 		boolean validInput = false;
-		
+		System.out.print("Play again? (y/n)\n");
 		do	{
-			System.out.print("Play again? (y/n)\n");	//prints this twice, have yet to figure out why
+			//System.out.print("Play again? (y/n)\n");	//prints this twice, have yet to figure out why
 			String replay = input.nextLine();
 			if(replay.equals("y") || replay.equals("Y"))	{
-				setup();
-				pickSymbols();
+				this.setup();
+				this.playGame();
 				validInput = true;
 				return true;
 			}
@@ -425,6 +425,8 @@ public class TicTacToe extends Game {
 
 	@Override
 	public void playGame() {
+		pickSymbols();
+		currentPlayer = pickFirstPlayer();
 		do {
 			do {
 				if(currentPlayer.equals(playerSymbol))
