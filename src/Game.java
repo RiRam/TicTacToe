@@ -7,7 +7,7 @@
 public abstract class Game {
 	
 	/**
-	 * rules - prints the rules
+	 * rules() - returns the rules (to be printed)
 	 */
 	public abstract String rules();
 	
@@ -28,7 +28,7 @@ public abstract class Game {
 
 
 	/** 
-	 * gameIsOver() - Return true if the game was just won 
+	 * gameIsOver() - checks if the game is over
 	 */
 	public abstract boolean gameIsOver();
 

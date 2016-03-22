@@ -1,6 +1,6 @@
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.concurrent.ThreadLocalRandom;
+//import java.util.concurrent.ThreadLocalRandom;
 
 public class TicTacToe extends Game {
 	
@@ -23,7 +23,8 @@ public class TicTacToe extends Game {
 	public static Scanner input = new Scanner(System.in); // the input Scanner
 	
 	/** 
-	 * TicTacToe - Constructor
+	 * TicTacToe() - Constructor
+	 * 
 	 * Initializes the game (replacing initGame())
 	 */
 	public TicTacToe()
@@ -141,11 +142,13 @@ public class TicTacToe extends Game {
 	}
 	
 	/**
+	 * getBestMove() - uses strategy to determine the next best available move
 	 * 
-	 * @return
+	 * @return int - position in the board for the select move
 	 */
-	public int getBestMove() {
+	public int getBestMove()  {
 		/*
+		 * provided code, has been replaced with new logic
 		ArrayList<String> availableSpaces = new ArrayList<String>();
 		boolean foundBestMove = false;
 		int spot = 100;
@@ -173,7 +176,13 @@ public class TicTacToe extends Game {
 			}
 		}
 		*/
-		int spot = -1;
+		
+		int spot = -1;	/* using -1 instead of throwing an exception
+						 * because of how gameIsOver() and tie() will end 
+						 * the game before -1 could be returned
+						 * (Could possibly be redone with exceptions)
+						 */
+		
 		
 		if(checkWin() != -1)
 		{
@@ -209,7 +218,7 @@ public class TicTacToe extends Game {
 		if (spot != -1) {
 			return spot;
 		} else {
-			/*
+			/* provided code, has been replaced
 			int n = ThreadLocalRandom.current().nextInt(0, availableSpaces.size());
 			return Integer.parseInt(availableSpaces.get(n));
 			*/
@@ -219,8 +228,9 @@ public class TicTacToe extends Game {
 	}
 	
 	/**
+	 * checkWin() - checks if the computer has a move to win
 	 * 
-	 * @return
+	 * @return int - position to win, -1 if no winning move
 	 */
 	public static int checkWin()
 	{
@@ -246,8 +256,9 @@ public class TicTacToe extends Game {
 	}
 	
 	/**
+	 * checkBlock() - checks if the computer can block a player win
 	 * 
-	 * @return
+	 * @return int - position to block, -1 if no blocking move
 	 */
 	public static int checkBlock()
 	{
@@ -273,8 +284,9 @@ public class TicTacToe extends Game {
 	}
 	
 	/**
+	 * checkCenter() - checks if the center is an available move for computer
 	 * 
-	 * @return
+	 * @return boolean - true if center is available, false if not
 	 */
 	public static boolean checkCenter()
 	{
@@ -282,8 +294,9 @@ public class TicTacToe extends Game {
 	}
 	
 	/**
+	 * checkOppositeCorner() - checks to see if a corner opposite the player is available
 	 * 
-	 * @return
+	 * @return int - position in opposite corner, -1 if no opposite corners available
 	 */
 	public static int checkOppositeCorner()
 	{
@@ -300,8 +313,9 @@ public class TicTacToe extends Game {
 	}
 	
 	/**
+	 * checkEmptyCorner() - checks for an empty corner position for the computer (0,2,6,8)
 	 * 
-	 * @return
+	 * @return int - position in empty corner, -1 if no corners available
 	 */
 	public static int checkEmptyCorner()
 	{
@@ -317,6 +331,11 @@ public class TicTacToe extends Game {
 			return -1;
 	}
 	
+	/**
+	 * checkEmptySide() - checks for an empty side position for the computer (1,3,5,7)
+	 * 
+	 * @return int - position in empty side, -1 if no sides available
+	 */
 	public static int checkEmptySide()
 	{
 		if(isEmptySpace(1))
@@ -334,7 +353,7 @@ public class TicTacToe extends Game {
 	/**
 	 * nextPlayer() - returns the next player
 	 * 
-	 * @return String
+	 * @return String - symbol of the player whose turn it is next
 	 */
 	public String nextPlayer() {
 		if (currentPlayer == playerSymbol) {
@@ -345,7 +364,7 @@ public class TicTacToe extends Game {
 	}
 	
 	/** 
-	 * Return true if it is a draw (no more empty cells) 
+	 * tie() - return true if it is a draw (no more empty cells) 
 	 */
 	public boolean tie() {
 		/*
@@ -363,7 +382,7 @@ public class TicTacToe extends Game {
 	}
 
 	/** 
-	 * printBoard() - Print the game board 
+	 * printBoard() - print the game board 
 	 */
 	public void printBoard() {
 		System.out.println(" " + board[0] + " | " + board[1] + " | " + board[2] 
@@ -373,6 +392,9 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
+	/**
+	 * rules() - returns the rules (to be printed)
+	 */
 	public String rules() {
 		return "Rules:\nTic-tac-toe is a paper-and-pencil game for two players, who take\n"
 				+ "turns marking the spaces in a 3×3 grid. The player who succeeds in placing\n"
@@ -381,6 +403,9 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
+	/**
+	 * setup() - sets up for TicTacToe by filling board positions with initial values ¨0¨-¨8¨
+	 */
 	public void setup() {
 		board[0] = "0";
 		board[1] = "1"; 
@@ -393,6 +418,12 @@ public class TicTacToe extends Game {
 		board[8] = "8";
 	}
 	
+	/**
+	 * isEmptySpace(int spot) - checks if a position in the board is empty
+	 * 
+	 * @param spot - position in board to check
+	 * @return boolean - true if the position is empty, false otherwise
+	 */
 	public static boolean isEmptySpace(int spot)
 	{
 		if(board[spot].equals(playerSymbol) || board[spot].equals(opponentSymbol))
@@ -402,6 +433,11 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
+	/**
+	 * replay() - prompts the player to replay the game, processes replays
+	 * 
+	 * !!! currently issue with stopping after replaying 2+ times, GitHub Issue #2
+	 */
 	public boolean replay() {
 		boolean validInput = false;
 		System.out.print("Play again? (y/n)\n");
@@ -424,6 +460,9 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
+	/**
+	 * playGame() - play the game
+	 */
 	public void playGame() {
 		pickSymbols();
 		currentPlayer = pickFirstPlayer();
@@ -443,6 +482,11 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
+	/** 
+	 * gameIsOver() - checks if the game is over
+	 * 
+	 * @return boolean - true if game is over, false otherwise
+	 */
 	public boolean gameIsOver() {
 		for ( int[] w : winConditions )           
         {
